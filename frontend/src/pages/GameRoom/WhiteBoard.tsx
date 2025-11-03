@@ -5,11 +5,17 @@ interface WhiteBoardProps {
   wsRef: React.RefObject<WebSocket | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   ctxRef: React.RefObject<CanvasRenderingContext2D | null>;
+  clientId: String | null,
+  currentDrawer: string | undefined,
+  gameStart: boolean
 }
 export default function WhiteBoard({
   wsRef,
   canvasRef,
-  ctxRef
+  ctxRef,
+  clientId,
+  currentDrawer,
+  gameStart,
 }: WhiteBoardProps) {
     const [isDrawing, setIsDrawing] = React.useState(false);
     const [currentColor, setCurrentColor] = React.useState('black');
@@ -90,27 +96,33 @@ export default function WhiteBoard({
       }
     ))
   }
+  const isDisabled = !gameStart || clientId !== currentDrawer;
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border-2 border-gray-100">
       <div className="bg-gray-300 rounded-xl border-2 border-dashed border-gray-300 aspect-video flex items-center justify-center hover:border-purple-400 transition-colors duration-300">
         <div className="">
           <canvas
+            
             ref={canvasRef}
-            className="bg-white rounded-lg shadow-inner cursor-crosshair"
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
+            className={`bg-white rounded-lg shadow-inner cursor-crosshair ${
+              isDisabled ? 'pointer-events-none opacity-50' : ''
+            }`}
+            onMouseDown={isDisabled ? undefined : startDrawing}
+            onMouseMove={isDisabled ? undefined : draw}
+            onMouseUp={isDisabled ? undefined : stopDrawing}
+            onMouseLeave={isDisabled ? undefined : stopDrawing}
           >
           </canvas>
         </div>
       </div>
       <div className="flex gap-3 mt-4 justify-center">
-        <button className="bg-linear-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-lg font-medium hover:from-purple-600 hover:to-indigo-600 transition-all duration-200 shadow-md hover:shadow-lg"
-          onClick={handleClear}
+       <button
+          className="bg-linear-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition duration-200 shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+          onClick={isDisabled ? undefined : handleClear}
         >
           Clear Canvas
         </button>
+
       </div>
       <ColorPallete setCurrentColor={setCurrentColor} currentColor={currentColor} />
     </div>

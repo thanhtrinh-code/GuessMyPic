@@ -7,22 +7,9 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket, roomId: int, clientId: str):
         await websocket.accept()
         connections = self.active_connections[roomId]['connections']
-        connections[clientId] = websocket
+        connections[clientId].websocket = websocket
 
     async def disconnect_player(self, websocket: WebSocket, roomId: int, clientId: str):
-        players = self.active_connections[roomId]['players']
-        connections = self.active_connections[roomId]['connections']
-
-        if clientId in players:
-            del players[clientId]
-        if clientId in connections:
-            del connections[clientId]
-
-        await self.broadcast_everyone_except(
-            message=f"Client #{clientId} disconnected.", 
-            roomId=roomId, 
-            websocket=websocket
-        )
         try:
             await websocket.close()
         except Exception:
@@ -32,8 +19,9 @@ class ConnectionManager:
         if roomId in self.active_connections:
             connections = self.active_connections[roomId]['connections']
             for ws in connections.values():
+                socket = ws.websocket
                 try:
-                    await ws.send_text(message)
+                    await socket.send_text(message)
                 except Exception:
                     pass  
 
@@ -41,9 +29,10 @@ class ConnectionManager:
         if roomId in self.active_connections:
             connections = self.active_connections[roomId]['connections']
             for ws in connections.values():
-                if ws != websocket:
+                socket = ws.websocket
+                if socket != websocket:
                     try:
-                        await ws.send_text(message)
+                        await socket.send_text(message)
                     except Exception:
                         pass  
 

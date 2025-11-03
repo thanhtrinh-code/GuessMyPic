@@ -1,7 +1,7 @@
 import React from "react";
 import CreateNew from "./CreateNew";
 import JoiningExist from "./JoiningExist";
-import LoadingPage from "./LoadingPage";
+import LoadingPage from "../LoadingPage";
 
 
 

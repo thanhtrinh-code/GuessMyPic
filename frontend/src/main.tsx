@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { BrowserRouter, Route, Routes } from 'react-router'
-import Doc from './pages/GameRoom/Doc'
+import Doc from './pages/GameRoom/RoomMain'
 import Landing from './pages/landing/Landing'
 
 createRoot(document.getElementById('root')!).render(

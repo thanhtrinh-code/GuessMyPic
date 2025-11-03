@@ -9,6 +9,7 @@ from ConnectionManager import ConnectionManager
 from Player import Player
 from PlayerConnection import PlayerConnection
 from GameState import GameState
+from dataclasses import asdict
 import uvicorn
 
 app = FastAPI()
@@ -27,13 +28,28 @@ import json
 async def websocket_endpoint(websocket: WebSocket, roomId: int):
     client_id = websocket.query_params.get("clientId")
     await manager.connect(websocket, roomId, client_id)
+    players = manager.active_connections[roomId]['players']
+    gameState = manager.active_connections[roomId]['gameState']
+    
+
+    # Convert to Json
+    players_dict = {clientId: asdict(player) for clientId, player in players.items()}
+    game_state_dict = asdict(gameState)
+
+    await manager.broadcast_everyone(
+        message=json.dumps({
+            "type": 'update_game',
+            "gameState": game_state_dict,
+            "players": players_dict
+        }),
+        roomId=roomId
+    )
     try:
         while True:
             data = await websocket.receive_text()
             message = json.loads(data)
             msg_type = message['type']
             msg = message['data']
-
             if msg_type == 'broadcast_everyone_except':
                 await manager.broadcast_everyone_except(json.dumps(msg), roomId, websocket)
             elif msg_type == 'broadcast_everyone':
@@ -49,7 +65,19 @@ async def get_state_game(roomId: int):
             content={"error": "Room not found"}
         )
     
+    players = manager.active_connections[roomId]['players']
+    gameState = manager.active_connections[roomId]['gameState']
+    
 
+    # Convert to Json
+    players_dict = {clientId: asdict(player) for clientId, player in players.items()}
+    game_state_dict = asdict(gameState)
+
+    return {
+        "success": True,
+        "gameState": game_state_dict,
+        "players": players_dict
+    }
 
 @app.post("/api/create_room")
 async def create_room(request: Request):
@@ -59,17 +87,17 @@ async def create_room(request: Request):
     clientId = str(uuid.uuid4())
     manager.active_connections[roomId] = {
                 "gameState": GameState(
-                    hostname=name,
+                    hostId=clientId,
                     capacityLimit=room_allowed,
-                    currentDrawer=None,
-                    currentWord=None,
                     round=0,
-                    gameInsession=False
+                    gameInsession=False,
+                    currentDrawer=None,
+                    currentCategory=None,
+                    currentWord=None
                 ),
                 "players": {
                     clientId: Player(
                         name=name,
-                        host=True,
                         score=0,
                         isDrawing=False,
                         hasGuessed=False,
@@ -99,12 +127,9 @@ async def join_room(request: Request):
         return { "success": False, "error": "Room is full." }
     
     clientId = str(uuid.uuid4())
-
-
     if clientId not in players and clientId not in connections:
         players[clientId] = Player(
             name=name,
-            host=False,
             score=0,
             isDrawing=False,
             hasGuessed=False,
