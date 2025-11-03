@@ -6,14 +6,17 @@ import uuid
 
 
 from ConnectionManager import ConnectionManager
+from DatabaseForGame import GameDatabase
 from Player import Player
 from PlayerConnection import PlayerConnection
+
 from GameState import GameState
 from dataclasses import asdict
 import uvicorn
 
 app = FastAPI()
 manager = ConnectionManager()
+gameDatabase = GameDatabase()
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,12 +53,32 @@ async def websocket_endpoint(websocket: WebSocket, roomId: int):
             message = json.loads(data)
             msg_type = message['type']
             msg = message['data']
-            if msg_type == 'broadcast_everyone_except':
+            if msg_type == 'drawing': # This is used in drawer to everyone about current drawing stroke
                 await manager.broadcast_everyone_except(json.dumps(msg), roomId, websocket)
-            elif msg_type == 'broadcast_everyone':
+            elif msg_type == 'round_ended': # Drawer to everyone about the current has ended, server respond back
                 await manager.broadcast_everyone(msg, roomId)
+            elif msg_type == 'game_start':
+                game_start(roomId)
+                print(manager.active_connections[roomId]['gameState'])
+                pass
+            elif msg_type == 'game_ended':
+                pass
+            elif msg_type == 'player_answer_correct':
+                pass
     except WebSocketDisconnect:
         await manager.disconnect_player(websocket, roomId, client_id)
+def game_start(roomId):
+    import random
+    gameState = manager.active_connections[roomId]['gameState']
+    players = manager.active_connections[roomId]['players']
+
+    gameState.round += 1
+    gameState.inSession = True
+    gameState.currentDrawer = random.choice(list(players.keys()))
+    category, word = gameDatabase.getCategoryAndWord()
+    gameState.currentCategory = category
+    gameState.currentWord = word
+    
 
 @app.get('/api/get_state_game/{roomId}')
 async def get_state_game(roomId: int):
@@ -99,7 +122,6 @@ async def create_room(request: Request):
                     clientId: Player(
                         name=name,
                         score=0,
-                        isDrawing=False,
                         hasGuessed=False,
                         correctGuesses=0
                     )
@@ -131,7 +153,6 @@ async def join_room(request: Request):
         players[clientId] = Player(
             name=name,
             score=0,
-            isDrawing=False,
             hasGuessed=False,
             correctGuesses=0
         )

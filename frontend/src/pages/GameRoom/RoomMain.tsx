@@ -63,12 +63,11 @@ export default function Doc() {
         const {gameState, players} = data
         let playersArr: Player[] = []
         Object.keys(players).forEach(clientId => {
-          const {name, score, isDrawing, hasGuessed, correctGuesses} = players[clientId]
+          const {name, score, hasGuessed, correctGuesses} = players[clientId]
           const player: Player = {
             id: clientId,
             name: name,
             score: score,
-            isDrawing: isDrawing,
             hasGuessed: hasGuessed,
             correctGuesses: correctGuesses
           }
@@ -79,6 +78,9 @@ export default function Doc() {
       }
     };
   }, [roomId, state?.clientId, state?.name]);
+
+  const isDrawer = clientId.current === gameState?.currentDrawer
+  const isHost = clientId.current === gameState?.hostId
   return (
     <>
       {(!gameState || !players) && <LoadingPage />}
@@ -87,13 +89,13 @@ export default function Doc() {
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-row justify-between h-full gap-6">
               <div className="flex-1 w-100">
-                <Intro roomId={roomId} clientId={clientId.current} gameStart={gameState.gameInsession} currentDrawer={gameState.currentDrawer} hostId={gameState.hostId}/>
+                <Intro wsRef={wsRef} roomId={roomId} gameStart={gameState.gameInsession} isDrawer={isDrawer} isHost={isHost} />
                 <WhiteBoard wsRef={wsRef} canvasRef={canvasRef} ctxRef={ctxRef} clientId={clientId.current} currentDrawer={gameState.currentDrawer} gameStart={gameState.gameInsession}/>
-                {/* <CategoryAndInput role={role} category={category} guess={guess} setGuess={setGuess} /> */}
+                {gameState.gameInsession && <CategoryAndInput isDrawer={isDrawer} category={gameState.currentCategory} guess={guess} setGuess={setGuess} /> }
               </div>
 
               <div className="w-80">
-                <Profiles players={players} hostId={gameState.hostId} gameStart={gameState.gameInsession} />
+                <Profiles players={players} hostId={gameState.hostId} gameStart={gameState.gameInsession} isDrawer={isDrawer}/>
               </div>
             </div>
           </div>

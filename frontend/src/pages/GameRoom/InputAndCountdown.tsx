@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 
 interface CategoryAndInputProps {
-  role: string;
-  category: string;
+  isDrawer: boolean
+  category: string | undefined;
   guess: string;
   setGuess: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function CategoryAndInput({
-  role,
+  isDrawer,
   category,
   guess,
   setGuess,
 }: CategoryAndInputProps) {
-  const isDrawer = role === 'drawer';
 
   const [timeLeft, setTimeLeft] = useState(45);
     const totalTime = 45;
@@ -29,7 +28,6 @@ export default function CategoryAndInput({
           return prev - 1;
         });
       }, 1000);
-      
       return () => clearInterval(timer);
     }, []);
   return (

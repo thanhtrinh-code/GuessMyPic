@@ -1,0 +1,105 @@
+import random
+import random
+
+class GameDatabase:
+    def __init__(self):
+        self.database = [
+            ("Animal", "elephant"), ("Animal", "penguin"), ("Animal", "giraffe"), ("Animal", "dolphin"), ("Animal", "tiger"),
+            ("Animal", "kangaroo"), ("Animal", "zebra"), ("Animal", "panda"), ("Animal", "koala"), ("Animal", "cheetah"),
+            ("Animal", "gorilla"), ("Animal", "octopus"), ("Animal", "flamingo"), ("Animal", "rhinoceros"), ("Animal", "hippopotamus"),
+            ("Animal", "leopard"), ("Animal", "crocodile"), ("Animal", "peacock"), ("Animal", "owl"), ("Animal", "eagle"),
+            ("Animal", "shark"), ("Animal", "whale"), ("Animal", "seal"), ("Animal", "otter"), ("Animal", "beaver"),
+            ("Animal", "squirrel"), ("Animal", "rabbit"), ("Animal", "hedgehog"), ("Animal", "fox"), ("Animal", "wolf"),
+            ("Animal", "bear"), ("Animal", "moose"), ("Animal", "deer"), ("Animal", "buffalo"), ("Animal", "lion"),
+            ("Animal", "jaguar"), ("Animal", "lynx"), ("Animal", "raccoon"), ("Animal", "skunk"), ("Animal", "badger"),
+            ("Animal", "parrot"), ("Animal", "toucan"), ("Animal", "hummingbird"), ("Animal", "pelican"), ("Animal", "stork"),
+            ("Animal", "crane"), ("Animal", "swan"), ("Animal", "duck"), ("Animal", "goose"), ("Animal", "turkey"),
+            
+            ("Food", "pizza"), ("Food", "sushi"), ("Food", "burger"), ("Food", "pasta"), ("Food", "tacos"),
+            ("Food", "curry"), ("Food", "salad"), ("Food", "sandwich"), ("Food", "steak"), ("Food", "chicken"),
+            ("Food", "rice"), ("Food", "noodles"), ("Food", "soup"), ("Food", "bread"), ("Food", "cheese"),
+            ("Food", "chocolate"), ("Food", "cake"), ("Food", "cookie"), ("Food", "donut"), ("Food", "pancake"),
+            ("Food", "waffle"), ("Food", "bacon"), ("Food", "eggs"), ("Food", "toast"), ("Food", "cereal"),
+            ("Food", "yogurt"), ("Food", "ice cream"), ("Food", "popcorn"), ("Food", "pretzel"), ("Food", "chips"),
+            ("Food", "nachos"), ("Food", "burrito"), ("Food", "quesadilla"), ("Food", "enchilada"), ("Food", "ramen"),
+            ("Food", "dumpling"), ("Food", "spring roll"), ("Food", "tempura"), ("Food", "kebab"), ("Food", "falafel"),
+            ("Food", "hummus"), ("Food", "guacamole"), ("Food", "salsa"), ("Food", "quiche"), ("Food", "croissant"),
+            ("Food", "bagel"), ("Food", "muffin"), ("Food", "cupcake"), ("Food", "brownie"), ("Food", "pie"),
+            
+            ("Fruit", "apple"), ("Fruit", "banana"), ("Fruit", "orange"), ("Fruit", "grape"), ("Fruit", "strawberry"),
+            ("Fruit", "blueberry"), ("Fruit", "raspberry"), ("Fruit", "blackberry"), ("Fruit", "mango"), ("Fruit", "pineapple"),
+            ("Fruit", "watermelon"), ("Fruit", "cantaloupe"), ("Fruit", "honeydew"), ("Fruit", "papaya"), ("Fruit", "guava"),
+            ("Fruit", "kiwi"), ("Fruit", "pomegranate"), ("Fruit", "fig"), ("Fruit", "date"), ("Fruit", "apricot"),
+            ("Fruit", "peach"), ("Fruit", "plum"), ("Fruit", "cherry"), ("Fruit", "pear"), ("Fruit", "lemon"),
+            ("Fruit", "lime"), ("Fruit", "grapefruit"), ("Fruit", "tangerine"), ("Fruit", "coconut"), ("Fruit", "avocado"),
+            ("Fruit", "passion fruit"), ("Fruit", "dragon fruit"), ("Fruit", "lychee"), ("Fruit", "persimmon"), ("Fruit", "starfruit"),
+            ("Fruit", "cranberry"), ("Fruit", "gooseberry"), ("Fruit", "mulberry"), ("Fruit", "elderberry"), ("Fruit", "boysenberry"),
+            
+            ("Vegetable", "carrot"), ("Vegetable", "broccoli"), ("Vegetable", "cauliflower"), ("Vegetable", "celery"), ("Vegetable", "lettuce"),
+            ("Vegetable", "spinach"), ("Vegetable", "kale"), ("Vegetable", "cabbage"), ("Vegetable", "onion"), ("Vegetable", "garlic"),
+            ("Vegetable", "potato"), ("Vegetable", "tomato"), ("Vegetable", "cucumber"), ("Vegetable", "pepper"), ("Vegetable", "eggplant"),
+            ("Vegetable", "zucchini"), ("Vegetable", "squash"), ("Vegetable", "pumpkin"), ("Vegetable", "corn"), ("Vegetable", "peas"),
+            ("Vegetable", "beans"), ("Vegetable", "asparagus"), ("Vegetable", "artichoke"), ("Vegetable", "mushroom"), ("Vegetable", "radish"),
+            ("Vegetable", "turnip"), ("Vegetable", "beet"), ("Vegetable", "parsnip"), ("Vegetable", "leek"), ("Vegetable", "scallion"),
+            
+            ("Sport", "basketball"), ("Sport", "soccer"), ("Sport", "tennis"), ("Sport", "volleyball"), ("Sport", "baseball"),
+            ("Sport", "hockey"), ("Sport", "swimming"), ("Sport", "boxing"), ("Sport", "wrestling"), ("Sport", "judo"),
+            ("Sport", "karate"), ("Sport", "archery"), ("Sport", "fencing"), ("Sport", "cycling"), ("Sport", "marathon"),
+            ("Sport", "skiing"), ("Sport", "snowboarding"), ("Sport", "surfing"), ("Sport", "skateboarding"), ("Sport", "golf"),
+            ("Sport", "cricket"), ("Sport", "rugby"), ("Sport", "badminton"), ("Sport", "squash"), ("Sport", "rowing"),
+            ("Sport", "sailing"), ("Sport", "diving"), ("Sport", "gymnastics"), ("Sport", "climbing"), ("Sport", "bowling"),
+            ("Sport", "darts"), ("Sport", "billiards"), ("Sport", "ping pong"), ("Sport", "figure skating"), ("Sport", "speedskating"),
+            
+            ("Profession", "doctor"), ("Profession", "teacher"), ("Profession", "engineer"), ("Profession", "lawyer"), ("Profession", "architect"),
+            ("Profession", "chef"), ("Profession", "pilot"), ("Profession", "nurse"), ("Profession", "scientist"), ("Profession", "programmer"),
+            ("Profession", "accountant"), ("Profession", "dentist"), ("Profession", "veterinarian"), ("Profession", "pharmacist"), ("Profession", "mechanic"),
+            ("Profession", "electrician"), ("Profession", "plumber"), ("Profession", "carpenter"), ("Profession", "artist"), ("Profession", "musician"),
+            ("Profession", "writer"), ("Profession", "journalist"), ("Profession", "photographer"), ("Profession", "designer"), ("Profession", "animator"),
+            ("Profession", "actor"), ("Profession", "director"), ("Profession", "librarian"), ("Profession", "translator"), ("Profession", "psychologist"),
+            ("Profession", "firefighter"), ("Profession", "police"), ("Profession", "detective"), ("Profession", "soldier"), ("Profession", "astronaut"),
+            ("Profession", "baker"), ("Profession", "barber"), ("Profession", "florist"), ("Profession", "gardener"), ("Profession", "mailman"),
+            
+            ("Object", "chair"), ("Object", "table"), ("Object", "lamp"), ("Object", "clock"), ("Object", "mirror"),
+            ("Object", "television"), ("Object", "computer"), ("Object", "phone"), ("Object", "camera"), ("Object", "book"),
+            ("Object", "pencil"), ("Object", "eraser"), ("Object", "scissors"), ("Object", "stapler"), ("Object", "tape"),
+            ("Object", "ruler"), ("Object", "calculator"), ("Object", "umbrella"), ("Object", "backpack"), ("Object", "wallet"),
+            ("Object", "keys"), ("Object", "watch"), ("Object", "glasses"), ("Object", "hat"), ("Object", "shoe"),
+            ("Object", "ball"), ("Object", "kite"), ("Object", "balloon"), ("Object", "bicycle"), ("Object", "skateboard"),
+            ("Object", "guitar"), ("Object", "drum"), ("Object", "piano"), ("Object", "trumpet"), ("Object", "microphone"),
+            ("Object", "bottle"), ("Object", "cup"), ("Object", "plate"), ("Object", "fork"), ("Object", "knife"),
+            ("Object", "spoon"), ("Object", "bowl"), ("Object", "pan"), ("Object", "pot"), ("Object", "kettle"),
+            ("Object", "toaster"), ("Object", "blender"), ("Object", "refrigerator"), ("Object", "oven"), ("Object", "microwave"),
+            
+            ("Vehicle", "car"), ("Vehicle", "truck"), ("Vehicle", "bus"), ("Vehicle", "motorcycle"), ("Vehicle", "bicycle"),
+            ("Vehicle", "scooter"), ("Vehicle", "train"), ("Vehicle", "subway"), ("Vehicle", "airplane"), ("Vehicle", "helicopter"),
+            ("Vehicle", "boat"), ("Vehicle", "ship"), ("Vehicle", "yacht"), ("Vehicle", "submarine"), ("Vehicle", "rocket"),
+            ("Vehicle", "ambulance"), ("Vehicle", "firetruck"), ("Vehicle", "taxi"), ("Vehicle", "limousine"), ("Vehicle", "van"),
+            ("Vehicle", "tractor"), ("Vehicle", "bulldozer"), ("Vehicle", "excavator"), ("Vehicle", "crane"), ("Vehicle", "skateboard"),
+            ("Vehicle", "rollerblades"), ("Vehicle", "surfboard"), ("Vehicle", "kayak"), ("Vehicle", "canoe"), ("Vehicle", "sailboat"),
+            
+            ("Building", "house"), ("Building", "apartment"), ("Building", "skyscraper"), ("Building", "castle"), ("Building", "church"),
+            ("Building", "temple"), ("Building", "mosque"), ("Building", "lighthouse"), ("Building", "barn"), ("Building", "shed"),
+            ("Building", "library"), ("Building", "museum"), ("Building", "theater"), ("Building", "stadium"), ("Building", "hospital"),
+            ("Building", "school"), ("Building", "university"), ("Building", "restaurant"), ("Building", "cafe"), ("Building", "hotel"),
+            ("Building", "bank"), ("Building", "post office"), ("Building", "mall"), ("Building", "store"), ("Building", "factory"),
+            ("Building", "warehouse"), ("Building", "garage"), ("Building", "pyramid"), ("Building", "tower"), ("Building", "bridge"),
+            
+            ("Nature", "tree"), ("Nature", "flower"), ("Nature", "grass"), ("Nature", "mountain"), ("Nature", "hill"),
+            ("Nature", "valley"), ("Nature", "river"), ("Nature", "lake"), ("Nature", "ocean"), ("Nature", "beach"),
+            ("Nature", "island"), ("Nature", "forest"), ("Nature", "jungle"), ("Nature", "desert"), ("Nature", "volcano"),
+            ("Nature", "waterfall"), ("Nature", "cave"), ("Nature", "canyon"), ("Nature", "cliff"), ("Nature", "rock"),
+            ("Nature", "stone"), ("Nature", "rainbow"), ("Nature", "cloud"), ("Nature", "sun"), ("Nature", "moon"),
+            ("Nature", "star"), ("Nature", "lightning"), ("Nature", "snowflake"), ("Nature", "icicle"), ("Nature", "leaf"),
+            
+            ("Weather", "sunny"), ("Weather", "cloudy"), ("Weather", "rainy"), ("Weather", "snowy"), ("Weather", "windy"),
+            ("Weather", "foggy"), ("Weather", "stormy"), ("Weather", "thunder"), ("Weather", "lightning"), ("Weather", "rainbow"),
+            ("Weather", "hail"), ("Weather", "tornado"), ("Weather", "hurricane"), ("Weather", "blizzard"), ("Weather", "drizzle"),
+            
+            ("Body Part", "head"), ("Body Part", "hair"), ("Body Part", "face"), ("Body Part", "eye"), ("Body Part", "nose"),
+            ("Body Part", "mouth"), ("Body Part", "ear"), ("Body Part", "neck"), ("Body Part", "shoulder"), ("Body Part", "arm"),
+            ("Body Part", "elbow"), ("Body Part", "hand"), ("Body Part", "finger"), ("Body Part", "thumb"), ("Body Part", "chest"),
+            ("Body Part", "back"), ("Body Part", "stomach"), ("Body Part", "waist"), ("Body Part", "hip"), ("Body Part", "leg"),
+            ("Body Part", "knee"), ("Body Part", "ankle"), ("Body Part", "foot"), ("Body Part", "toe"), ("Body Part", "heart"),
+        ]
+    def getCategoryAndWord(self):
+        return random.choice(self.database)

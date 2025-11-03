@@ -2,7 +2,6 @@ export interface Player{
     id: string
     name: string
     score: number
-    isDrawing: boolean
     hasGuessed: boolean
     correctGuesses: number
 }

@@ -64,7 +64,7 @@ export default function WhiteBoard({
 
     // Send drawing data over WebSocket
     wsRef.current?.send(JSON.stringify({
-      type: 'broadcast_everyone_except',
+      type: 'drawing',
       data: {
         type: 'draw',
         prevX: lastXRef.current,
