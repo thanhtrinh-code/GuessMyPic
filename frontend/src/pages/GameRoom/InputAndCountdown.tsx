@@ -2,18 +2,12 @@ import { useEffect, useState } from "react";
 
 interface CategoryAndInputProps {
   isDrawer: boolean
-  category: string | undefined;
-  guess: string;
-  setGuess: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function CategoryAndInput({
   isDrawer,
-  category,
-  guess,
-  setGuess,
 }: CategoryAndInputProps) {
-
+  const [guess, setGuess] = useState('');
   const [timeLeft, setTimeLeft] = useState(45);
     const totalTime = 45;
     const percentage = (timeLeft / totalTime) * 100;

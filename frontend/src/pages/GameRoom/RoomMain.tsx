@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useParams, useLocation } from "react-router";
+import {toast} from 'react-toastify'
 import Intro from "./Intro";
 import WhiteBoard from "./WhiteBoard";
 import CategoryAndInput from "./InputAndCountdown";
@@ -7,14 +8,19 @@ import CategoryAndInput from "./InputAndCountdown";
 import Profiles from "./Profiles";
 import type { GameState, Player } from "./Dataclasses";
 import LoadingPage from "../LoadingPage";
+import BackButton from "./BackButton";
+import ConfirmationPage from "./ConfirmationPage";
+import CountDownClose from "./CountDownClose";
+import ClosePlayerPopUp from "./ClosePlayerPopUp";
 
 export default function Doc() {
   const {roomId} = useParams(); // params.roomId will hold the room id from the route (e.g. /:roomId)
   const {state} = useLocation();
 
-  const [guess, setGuess] = useState('');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [players, setPlayers] = useState<Player[] | null>(null);
+  const [confirmationOfClose, setConfirmationOfClose] = useState(false)
+  const [close, setClose] = useState(false)
 
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -87,23 +93,54 @@ export default function Doc() {
           currentWord: currentWord,
         }
         setGameState(temp)
+      } else if (data.type === 'player_close') {
+        const {gameState, players, closePlayer} = data
+        let playersArr: Player[] = []
+        Object.keys(players).forEach(clientId => {
+          const {name, score, hasGuessed, correctGuesses} = players[clientId]
+          const player: Player = {
+            id: clientId,
+            name: name,
+            score: score,
+            hasGuessed: hasGuessed,
+            correctGuesses: correctGuesses
+          }
+          playersArr.push(player)
+        })
+        setPlayers(playersArr)
+        setGameState(gameState)
+        toast.info(`${closePlayer} has left the room`);
+      } else if (data.type === 'host_close') {
+        wsRef.current?.send(JSON.stringify({
+          type: 'remove_room',
+          data: null
+        }))
+        setClose(true)
       }
     };
   }, [roomId, state?.clientId, state?.name]);
+  
 
   const isDrawer = clientId.current === gameState?.currentDrawer
   const isHost = clientId.current === gameState?.hostId
+
+  
   return (
     <>
       {(!gameState || !players) && <LoadingPage />}
       {players && gameState && (
         <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-purple-50 p-6">
+          <ClosePlayerPopUp/>
           <div className="max-w-7xl mx-auto">
+              {!gameState.gameInsession && <BackButton setConfirmationOfClose={setConfirmationOfClose}/>}
+
+
+          
             <div className="flex flex-row justify-between h-full gap-6">
               <div className="flex-1 w-100">
                 <Intro wsRef={wsRef} roomId={roomId} gameStart={gameState.gameInsession} isDrawer={isDrawer} isHost={isHost} currentCategory={gameState.currentCategory} currentWord={gameState.currentWord}/>
                 <WhiteBoard wsRef={wsRef} canvasRef={canvasRef} ctxRef={ctxRef} isDrawer={isDrawer} gameStart={gameState.gameInsession}/>
-                {gameState.gameInsession && <CategoryAndInput isDrawer={isDrawer} category={gameState.currentCategory} guess={guess} setGuess={setGuess} /> }
+                {gameState.gameInsession && <CategoryAndInput isDrawer={isDrawer} /> }
               </div>
 
               <div className="w-80">
@@ -113,6 +150,8 @@ export default function Doc() {
           </div>
         </div>
       )}
+      {confirmationOfClose && <ConfirmationPage setConfirmationOfClose={setConfirmationOfClose} wsRef={wsRef} isHost={isHost} clientId={clientId.current}/>}
+      {close && <CountDownClose/>}
     </>
   );
 }

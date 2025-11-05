@@ -66,12 +66,31 @@ async def websocket_endpoint(websocket: WebSocket, roomId: int):
                     'gameState': asdict(manager.active_connections[roomId]['gameState'])
                 }
                 await manager.broadcast_everyone(json.dumps(msg), roomId)
-            elif msg_type == 'game_ended':
-                pass
-            elif msg_type == 'player_answer_correct':
-                pass
+            elif msg_type == 'host_close':
+                msg = {
+                    'type': 'host_close'
+                }
+                await manager.broadcast_everyone_except(json.dumps(msg), roomId, websocket)
+            elif msg_type == 'player_close':
+                clientId = msg['clientId']
+                playerName = manager.active_connections[roomId]['players'][clientId].name
+                await manager.remove_player(websocket, roomId, clientId)
+                gameState = asdict(manager.active_connections[roomId]['gameState'])
+                players = {clientId: asdict(player) for clientId, player in players.items()}
+                msg = {
+                    'type': 'player_close',
+                    'gameState': gameState,
+                    'players': players,
+                    'closePlayer': playerName,
+                }
+                await manager.broadcast_everyone(json.dumps(msg), roomId)
+                break
+            elif msg_type == 'remove_room':
+                await manager.remove_room(roomId)
+                break
     except WebSocketDisconnect:
         await manager.disconnect_player(websocket, roomId, client_id)
+
 def game_start(roomId):
     import random
     gameState = manager.active_connections[roomId]['gameState']
@@ -83,29 +102,7 @@ def game_start(roomId):
     category, word = gameDatabase.getCategoryAndWord()
     gameState.currentCategory = category
     gameState.currentWord = word
-    
 
-@app.get('/api/get_state_game/{roomId}')
-async def get_state_game(roomId: int):
-    if roomId not in manager.active_connections:
-        return JSONResponse(
-            status_code=404,
-            content={"error": "Room not found"}
-        )
-    
-    players = manager.active_connections[roomId]['players']
-    gameState = manager.active_connections[roomId]['gameState']
-    
-
-    # Convert to Json
-    players_dict = {clientId: asdict(player) for clientId, player in players.items()}
-    game_state_dict = asdict(gameState)
-
-    return {
-        "success": True,
-        "gameState": game_state_dict,
-        "players": players_dict
-    }
 
 @app.post("/api/create_room")
 async def create_room(request: Request):
@@ -135,7 +132,6 @@ async def create_room(request: Request):
                     clientId: PlayerConnection(None)
                 }
             }
-
     return { "success": True, "roomId": roomId, "clientId": clientId }
 
 @app.post("/api/join_room")
