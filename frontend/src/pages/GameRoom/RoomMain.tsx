@@ -48,9 +48,18 @@ export default function Doc() {
 
     // Connect websocket
     const ws = new WebSocket(
-      `ws://127.0.0.1:8000/ws/${roomId}?clientId=${clientId.current}&clientName=${clientName}`
+      `wss://guesspic.onrender.com/ws/${roomId}?clientId=${clientId.current}&clientName=${clientName}`
     );
     wsRef.current = ws;
+
+    ws.onerror = (error) => {
+      console.error('❌ WebSocket error:', error);
+      console.error('Error details:', {
+        type: error.type,
+        target: error.target,
+        readyState: ws.readyState
+      });
+    };
 
     ws.onopen = () => {
       console.log("WebSocket connection established");

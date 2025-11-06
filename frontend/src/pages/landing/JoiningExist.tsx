@@ -45,7 +45,7 @@ export default function JoiningExist({
 
     try {
       setIsLoading(true);
-      const response = await fetch('http://127.0.0.1:8000/api/join_room', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/join_room`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, roomId: parseInt(roomId, 10) }),

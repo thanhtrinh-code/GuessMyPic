@@ -11,8 +11,8 @@ export default function landing() {
 
 
   const [joinForm, setJoinForm] = React.useState({
-    name: 'Bob',
-    roomId: '100001',
+    name: '',
+    roomId: '',
     joinError: ''
   })
 

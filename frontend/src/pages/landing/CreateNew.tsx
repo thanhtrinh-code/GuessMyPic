@@ -9,8 +9,8 @@ export default function CreateNew({
   setIsLoading,
   setError
 }: CreateNewsProps) {
-  const [name, setName] = React.useState('Thanh');
-  const [roomAllowed, setRoomAllowed] = React.useState('4');
+  const [name, setName] = React.useState('');
+  const [roomAllowed, setRoomAllowed] = React.useState('');
   const [createError, setCreateError] = React.useState('');
 
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export default function CreateNew({
     
     try {
         setIsLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/api/create_room', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/create_room`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,6 +51,7 @@ export default function CreateNew({
           }),
         });
         const data = await response.json();
+        
         if (data.success) {
           localStorage.setItem('roomData', JSON.stringify({
             roomId: data.roomId,
